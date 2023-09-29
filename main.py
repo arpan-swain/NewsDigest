@@ -1,37 +1,24 @@
 import requests
-import time
 from send_email import send_email
 
-# Adjusting clock time to automate the task
-
-clock = time.strftime("%Y-%m-%d")
-print(clock)
-clock = clock.split("-")
-print(clock)
-clock1 = int(clock[1])
-
-if clock1 < 10:
- clock1 = clock1-1
- clock1 = "0"+str(clock1)
-
-clock[1] = clock1
-clock = "-".join(clock)
-print(clock)
 
 api_key = "8b2eb8f64426448093a856a735e1cc58"
-url = f"https://newsapi.org/v2/everything?q=tesla&from=\
-{clock}&sortBy=publishedAt&apiKey=\
-8b2eb8f64426448093a856a735e1cc58"
+topic = "tesla"
 
-req = requests.get(url)
+
+url1 = f"https://newsapi.org/v2/everything?\
+q={topic}\
+&sortBy=publishedAt\
+&apiKey=8b2eb8f64426448093a856a735e1cc58\
+&language=en"
+
+req = requests.get(url1)
 content = req.json()
 
-body = ""
-i=0
-for article in content["articles"]:
+body = ""+"Subject: Today's News"+2*'\n'
+for article in content["articles"][:20]:
     if article["title"] is not None:
-        i += 1
-        body = body + f"{i} - {article['title']}"+ "\n" + article["description"] + 2*'\n'
+        body = body + article["title"] + '\n'+article["description"]+'\n'+ article["url"]+2*'\n'
 
 # encoding error solved
 body = body.encode("utf-8")
